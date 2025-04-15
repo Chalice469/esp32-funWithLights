@@ -1,0 +1,74 @@
+#ESP32 Family using micropython neoppixel library
+#Micropython Led Program for use on the ESP32C3/esp32vroom v1.24.1
+from neopixel import NeoPixel
+from machine import Pin
+from time import sleep
+#Configuration
+PIXEL_COUNT = 21
+LED_PIN = 3
+
+#Pin Definitions
+neo_leds = Pin(LED_PIN, Pin.OUT)
+pix = NeoPixel(neo_leds, PIXEL_COUNT) 
+#colors
+Green, Red, Blue, White, Black = (128, 0, 0), (0, 255, 0), (0, 0, 128), (43, 42, 43), (1,1,1)
+Pink, Orange, Purple, Yellow, Off = (0, 128, 8), (8, 128, 0), (0, 128, 56), (128, 128, 0), (0,0,0)
+
+Usa = [Red, White, Blue]
+
+def all_pix(color):
+    pix.fill(color)
+    pix.write()
+
+def single_pix(color, index):
+    pix[index] = color
+    pix.write()
+    
+def flag_linear(flag_colors):
+    delay = 0.4 # Constant Delay
+    index = 0
+    while index < PIXEL_COUNT:
+        for color in flag_colors:
+            if index < PIXEL_COUNT:
+                single_pix(color, index)
+                index += 1
+                sleep(delay)
+            
+def flag_sequence(flag_colors, iterations=3):
+    delay = 0.4 # Constant delay
+    while iterations > 0:
+        for color in flag_colors:
+            all_pix(color)
+            sleep(delay)
+        iterations -= 1
+            
+def flag_scroll(flag):
+    delay = 0.4
+    count = 0
+    length = len(flag)
+    while count <= (PIXEL_COUNT - length):
+        for color in flag:
+            pix[count] = color
+            count += 1
+        pix.write()
+        sleep(.4)
+        all_pix(Off)
+        count = count - length + 1
+
+def routine_one(flag):
+    flag_sequence(flag)
+    sleep(1)
+    flag_linear(flag)
+    sleep(1)
+    flag_scroll(flag)
+    sleep(1)
+    
+def play(flag, iterations=20):
+    while iterations:
+        for color in flag:
+            routine_one(flag)
+        iterations -= 1
+    all_pix(Off)
+
+play(Usa)
+
