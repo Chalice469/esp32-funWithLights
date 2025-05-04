@@ -13,11 +13,16 @@ pix = NeoPixel(neo_leds, PIXEL_COUNT)
 
 #function to activate all pixels
 def all_pix(color):
-  pass
+  for p in range(PIXEL_COUNT):
+    pix[p] = color
+  pix.write()
 
 #function to activate single pixel
 def single_pix(color, index):
-  pass
+  pix[index] = color
+  pix.write()
 
 def pix_group(color, start, end):
-  pass
+  for p in range(start, end):
+    pix[p] = color
+  pix.write()
